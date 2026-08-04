@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
+import { RepoController } from "./repo.controller";
+import { ReposService } from "./repos.service";
 
-@Module({})
+@Module({
+  controllers: [RepoController],
+  providers: [ReposService],
+})
 export class ReposModule {}

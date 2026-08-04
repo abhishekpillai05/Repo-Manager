@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "paths": {
       "@pt-repo-manager/shared-types": ["../../packages/shared-types/index.ts"]
-    }
+    },
+    "outDir": "./dist"
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
