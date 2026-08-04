@@ -2,6 +2,8 @@
   "extends": "../../packages/tsconfig/nestjs.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@pt-repo-manager/shared-types": ["../../packages/shared-types/index.ts"]
     }
