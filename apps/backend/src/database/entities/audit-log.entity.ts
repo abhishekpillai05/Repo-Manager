@@ -1,22 +1,37 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('audit_log')
 export class AuditLogEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  actor!: string;
+  @Column({ type: 'varchar', nullable: true })
+  userId!: string | null;
 
-  @Column()
-  actionType!: string;
+  @Index()
+  @Column({ type: 'varchar' })
+  action!: string;
 
-  @Column()
-  targetRepo!: string;
+  @Index()
+  @Column({ type: 'varchar', nullable: true })
+  repositoryId!: string | null;
 
-  @Column({ type: 'timestamptz' })
-  timestampUtc!: Date;
+  @Column({ type: 'varchar', nullable: true })
+  repositoryName!: string | null;
 
-  @Column()
-  ipAddress!: string;
+  /**
+   * Arbitrary JSON payload for the audit event.
+   */
+  @Column({ type: 'jsonb', nullable: true })
+  details!: Record<string, unknown> | null;
+
+  @Index()
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt!: Date;
 }
