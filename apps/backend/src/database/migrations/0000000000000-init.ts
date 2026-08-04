@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 /**
  * Initial schema migration — creates system_config, repo_override, and audit_log tables.
- * This replaces the original scaffold migration that used an incorrect schema.
  */
 export class Init0000000000000 implements MigrationInterface {
   name = 'Init0000000000000';
