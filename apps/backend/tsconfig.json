@@ -1,0 +1,10 @@
+{
+  "extends": "../../packages/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@pt-repo-manager/shared-types": ["../../packages/shared-types/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}

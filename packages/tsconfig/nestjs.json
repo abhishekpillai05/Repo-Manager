@@ -1,0 +1,9 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "../../dist/apps/backend"
+  },
+  "include": ["../../apps/backend/src/**/*.ts", "../../apps/backend/test/**/*.ts"]
+}

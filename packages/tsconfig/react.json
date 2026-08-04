@@ -1,0 +1,10 @@
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "../../dist/apps/frontend"
+  },
+  "include": ["../../apps/frontend/src/**/*.ts", "../../apps/frontend/src/**/*.tsx"]
+}
