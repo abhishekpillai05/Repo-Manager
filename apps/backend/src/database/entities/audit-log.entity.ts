@@ -27,7 +27,6 @@ export class AuditLogEntity {
 
   /**
    * Arbitrary JSON payload for the audit event.
-   * Must never contain passwords, tokens, or secrets.
    */
   @Column({ type: 'jsonb', nullable: true })
   details!: Record<string, unknown> | null;
