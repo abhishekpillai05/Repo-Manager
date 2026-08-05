@@ -1,9 +1,13 @@
-import { Module } from "@nestjs/common";
-import { RepoController } from "./repos.controller";
-import { ReposService } from "./repos.service";
+import { Module } from '@nestjs/common';
+import { LifecycleModule } from '../lifecycle/lifecycle.module';
+import { ReposService } from './repos.service';
 
 @Module({
-  controllers: [RepoController],
-  providers: [ReposService],
+    imports: [
+        LifecycleModule,
+    ],
+    providers: [
+        ReposService,
+    ],
 })
 export class ReposModule {}
