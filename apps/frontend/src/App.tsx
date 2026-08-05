@@ -1,10 +1,12 @@
-import { AppLayout } from './components/layout/AppLayout';
-import { Dashboard } from './pages/Dashboard';
+import React from 'react';
 
-export default function App() {
+export function App() {
   return (
-    <AppLayout>
-      <Dashboard />
-    </AppLayout>
+    <div style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem', textAlign: 'center' }}>
+      <h1>PT Repo Manager</h1>
+      <p>Candidate Practical Test Repository Management Application Shell</p>
+    </div>
   );
 }
+
+export default App;
