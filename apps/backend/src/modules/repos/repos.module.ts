@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { LifecycleModule } from '../lifecycle/lifecycle.module';
-import { ReposService } from './repos.service';
+import { ReposService } from './repos2.service';
 
 @Module({
     imports: [

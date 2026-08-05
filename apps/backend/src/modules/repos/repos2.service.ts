@@ -122,13 +122,30 @@ export class ReposService {
         }
     }
 
-    private buildRepoSummary(
+    private async buildRepoSummary(
     repository: any,
     repoPrefix: string,
-    retentionDays: number,
-    warningDays: number,
+    // retentionDays: number,
+    // warningDays: number,
     today: Date
-    ): any{
+    ):Promise<any> {
+
+        // ===========================================
+    // TODO: Get effective retention period
+    // Engineer B
+    // const retentionDays =
+    //     await this.repoOverrideService.getEffectiveRetentionDays(repository.id);
+    // ===========================================
+
+
+    // ===========================================
+    // TODO: Get global configuration
+    // Engineer B
+    // const config =
+    //     await this.systemConfigService.getOrCreateDefaultConfig();
+    //
+    // const warningDays = config.warningDays;
+    // ===========================================
     
         const role =
     this.parseRole(
