@@ -1,8 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { RepositoryStatus } from "./repository-status.enum";
 import { RepositoryAction } from "./repository-action.enum";
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
+@Injectable()
 export class LifeCycleService
 {
     getEffectiveDeletionDate(createdAt: Date, retentionDays: number,

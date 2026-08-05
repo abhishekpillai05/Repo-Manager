@@ -1,4 +1,7 @@
+import { Injectable } from '@nestjs/common';
+import { LifeCycleService } from '../lifecycle/lifecycle.service';
 import { RepositoryStatus } from "../lifecycle/repository-status.enum";
+// import { RepoSummary } from '../../../../../packages/shared-types/src/repo.interface';
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -9,7 +12,13 @@ const VALID_ROLES = [
     "system-architect"
 ];
 
+@Injectable()
 export class ReposService {
+
+    constructor(
+        private readonly lifecycleService: LifeCycleService,
+    ) {}
+
     private calculateDaysSinceCreation(
     createdAt: Date,
     today: Date
@@ -111,5 +120,34 @@ export class ReposService {
             default:
                 return "Pending Deletion";
         }
+    }
+
+    private buildRepoSummary(
+    repository: any,
+    repoPrefix: string,
+    retentionDays: number,
+    warningDays: number,
+    today: Date
+    ): any{
+    
+        const role =
+    this.parseRole(
+        repository.name,
+        repoPrefix
+    );
+
+    const candidateName =
+        this.parseCandidateName(
+            repository.name,
+            repoPrefix,
+            role
+        );
+
+    const daysSinceCreation =
+        this.calculateDaysSinceCreation(
+            new Date(repository.createdAt),
+            today
+        );
+
     }
 }
