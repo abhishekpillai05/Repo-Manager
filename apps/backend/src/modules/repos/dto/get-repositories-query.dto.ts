@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
 import { RepoStatus } from "../enums/repo-status.enum";
 import { AccessStatus } from "../enums/access-status.enum";
-import { RepositorySortField } from "../enums/epository-sort-field.enum";
+import { RepositorySortField } from "../enums/repository-sort-field.enum";
 import { SortOrder } from "../enums/sort-order.enum";
 
 /**
