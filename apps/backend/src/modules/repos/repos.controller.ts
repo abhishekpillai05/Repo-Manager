@@ -19,9 +19,8 @@ export class RepoController {
    * GET /repos
    */
 
-  //after we integrate we'll add explicit return type for this function as : RepositoryDto[]
   @Get()
-  getRepositories(@Query() query: GetRepositoriesQueryDto) {
+  getRepositories(@Query() query: GetRepositoriesQueryDto): Promise<RepositoryDto[]> {
     return this.reposService.getRepositories(query);
   }
 
@@ -35,7 +34,7 @@ export class RepoController {
    * GET /repos/pt-backend-john-doe
    */
   @Get(":name")
-  getRepository(@Param("name") repositoryName: string): RepositoryDetailsDto {
+  getRepository(@Param("name") repositoryName: string): Promise<RepositoryDetailsDto> {
     return this.reposService.getRepository(repositoryName);
   }
 
@@ -51,21 +50,21 @@ export class RepoController {
    * GET /repos/pt-backend-john-doe/collaborators
    */
   @Get(":name/collaborators")
-  getCollaborators(@Param("name") repositoryName: string): CollaboratorDto[] {
+  getCollaborators(@Param("name") repositoryName: string): Promise<CollaboratorDto[]> {
     return this.reposService.getCollaborators(repositoryName);
   }
 
   @Post(":name/archive")
   archiveRepository(
     @Param("name") repositoryName: string,
-  ): OperationResponseDto {
+  ): Promise<OperationResponseDto> {
     return this.reposService.archiveRepository(repositoryName);
   }
 
   @Delete(":name")
   deleteRepository(
     @Param("name") repositoryName: string,
-  ): OperationResponseDto {
+  ): Promise<OperationResponseDto> {
     return this.reposService.deleteRepository(repositoryName);
   }
 
@@ -84,7 +83,7 @@ export class RepoController {
     @Param("name") repositoryName: string,
 
     @Param("username") username: string,
-  ): OperationResponseDto {
+  ): Promise<OperationResponseDto> {
     return this.reposService.removeCollaborator(repositoryName, username);
   }
 
@@ -101,7 +100,7 @@ export class RepoController {
   @Delete(":name/collaborators")
   removeAllCollaborators(
     @Param("name") repositoryName: string,
-  ): OperationResponseDto {
+  ): Promise<OperationResponseDto> {
     return this.reposService.removeAllCollaborators(repositoryName);
   }
 }

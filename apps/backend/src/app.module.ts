@@ -6,6 +6,9 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GithubModule } from './modules/github/github.module';
+import { ConfigManagementModule } from './modules/config/config.module';
+import { LifecycleModule } from './modules/lifecycle/lifecycle.module';
+import { ReposModule } from './modules/repos/repos.module';
 import { SchedulerModule } from "./modules/scheduler/scheduler.module";
 
 
@@ -18,7 +21,10 @@ import { SchedulerModule } from "./modules/scheduler/scheduler.module";
     HealthModule,
     AuthModule,
     GithubModule,
-    SchedulerModule
+    ConfigManagementModule,
+    LifecycleModule,
+    ReposModule,
+    SchedulerModule,
   ],
   controllers: [],
   providers: [],
