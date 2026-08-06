@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { GithubService, parseRepoName } from './github.service';
 import { AppConfigService } from '../../config/app-config.service';
-import { SystemConfig } from '../../database/entities/SystemConfig.entity';
+import { SystemConfigEntity } from '../../database/entities/system-config.entity';
 import { GithubApiError } from './errors/github-api.error';
 
 describe('GithubService', () => {
@@ -25,7 +25,7 @@ describe('GithubService', () => {
           useValue: mockAppConfigService,
         },
         {
-          provide: getRepositoryToken(SystemConfig),
+          provide: getRepositoryToken(SystemConfigEntity),
           useValue: mockSystemConfigRepository,
         },
       ],

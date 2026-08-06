@@ -1,8 +1,16 @@
 import { Module } from "@nestjs/common";
+import { GithubModule } from "../github/github.module";
+import { ConfigManagementModule } from "../config/config.module";
+import { LifecycleModule } from "../lifecycle/lifecycle.module";
 import { RepoController } from "./repos.controller";
 import { ReposService } from "./repos.service";
 
 @Module({
+  imports: [
+    GithubModule,
+    ConfigManagementModule,
+    LifecycleModule,
+  ],
   controllers: [RepoController],
   providers: [ReposService],
 })

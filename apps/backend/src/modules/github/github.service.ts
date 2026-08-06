@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Octokit } from 'octokit';
 import { AppConfigService } from '../../config/app-config.service';
-import { SystemConfig } from '../../database/entities/SystemConfig.entity';
+import { SystemConfigEntity } from '../../database/entities/system-config.entity';
 import { GithubApiError } from './errors/github-api.error';
 
 export interface ParsedRepoName {
@@ -55,8 +55,8 @@ export class GithubService {
 
   constructor(
     private readonly appConfigService: AppConfigService,
-    @InjectRepository(SystemConfig)
-    private readonly systemConfigRepository: Repository<SystemConfig>,
+    @InjectRepository(SystemConfigEntity)
+    private readonly systemConfigRepository: Repository<SystemConfigEntity>,
   ) {}
 
   /**
@@ -157,8 +157,9 @@ export class GithubService {
   public async getPtRepositories(userToken?: string, prefixOverride?: string): Promise<any[]> {
     let prefix = prefixOverride;
     if (!prefix) {
-      const config = await this.systemConfigRepository.findOne({ where: { id: 'default' } });
-      prefix = config?.repoPrefix || 'pt-';
+      // SystemConfigEntity does not carry repoPrefix; default to 'pt-'.
+      // The prefix can be extended to SystemConfigEntity in a future migration.
+      prefix = 'pt-';
     }
 
     const allRepos = await this.listOrgRepos(userToken);
