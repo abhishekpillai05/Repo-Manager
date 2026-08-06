@@ -4,8 +4,9 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@pt-repo-manager/shared-types": ["../../packages/shared-types/index.ts"]
+      "@pt-repo-manager/shared-types": ["../../packages/shared-types/index.ts"],
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "e2e/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "e2e/**/*.ts", "vite.config.ts"]
 }
