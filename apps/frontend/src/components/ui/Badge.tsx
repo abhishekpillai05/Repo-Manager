@@ -1,31 +1,40 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { type VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-interface BadgeProps {
-  children: ReactNode;
-  tone?: 'neutral' | 'success' | 'warning' | 'danger';
-}
+const badgeVariants = cva(
+  'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  {
+    variants: {
+      variant: {
+        default:
+          'border-transparent bg-primary text-primary-foreground',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground',
+        destructive:
+          'border-transparent bg-destructive/10 text-destructive border-destructive/20',
+        outline: 'border-border text-foreground bg-transparent',
+        success:
+          'border-transparent bg-success/10 text-success border-success/20',
+        warning:
+          'border-transparent bg-warning/10 text-warning border-warning/20',
+        muted:
+          'border-transparent bg-muted text-muted-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+);
 
-const badgeStyles: Record<NonNullable<BadgeProps['tone']>, CSSProperties> = {
-  neutral: { background: '#e2e8f0', color: '#0f172a' },
-  success: { background: '#dcfce7', color: '#166534' },
-  warning: { background: '#fef3c7', color: '#92400e' },
-  danger: { background: '#fee2e2', color: '#991b1b' },
-};
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLSpanElement>,
+    VariantProps<typeof badgeVariants> {}
 
-export function Badge({ children, tone = 'neutral' }: BadgeProps) {
+function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        borderRadius: 999,
-        padding: '0.35rem 0.75rem',
-        fontSize: '0.875rem',
-        fontWeight: 600,
-        ...badgeStyles[tone],
-      }}
-    >
-      {children}
-    </span>
+    <span className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
+
+export { Badge, badgeVariants };
