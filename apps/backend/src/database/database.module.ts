@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfigModule } from '../config/app-config.module';
 import { AppConfigService } from '../config/app-config.service';
-import { SystemConfig } from './entities/SystemConfig.entity';
-import { RepoOverride } from './entities/RepoOverride.entity';
-import { AuditLog } from './entities/AuditLog.entity';
+import { SystemConfigEntity } from './entities/system-config.entity';
+import { RepoOverrideEntity } from './entities/repo-override.entity';
+import { AuditLogEntity } from './entities/audit-log.entity';
 
 @Module({
   imports: [
@@ -18,12 +18,12 @@ import { AuditLog } from './entities/AuditLog.entity';
         username: appConfig.databaseUser,
         password: appConfig.databasePassword,
         database: appConfig.databaseName,
-        entities: [SystemConfig, RepoOverride, AuditLog],
+        entities: [SystemConfigEntity, RepoOverrideEntity, AuditLogEntity],
         synchronize: false, // Strict: off in all environments
         logging: appConfig.isDevelopment,
       }),
     }),
-    TypeOrmModule.forFeature([SystemConfig, RepoOverride, AuditLog]),
+    TypeOrmModule.forFeature([SystemConfigEntity, RepoOverrideEntity, AuditLogEntity]),
   ],
   exports: [TypeOrmModule],
 })

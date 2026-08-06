@@ -223,6 +223,8 @@ export class ReposService {
         comparison = a.daysUntilDeletion - b.daysUntilDeletion;
       } else if (sortBy === RepositorySortField.REPOSITORY_NAME) {
         comparison = a.repositoryName.localeCompare(b.repositoryName);
+      } else if (sortBy === RepositorySortField.CANDIDATE_NAME) {
+        comparison = a.candidateName.localeCompare(b.candidateName);
       }
       return order === SortOrder.ASC ? comparison : -comparison;
     });
