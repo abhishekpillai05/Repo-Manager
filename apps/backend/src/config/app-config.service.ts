@@ -47,6 +47,10 @@ export class AppConfigService {
     return this.configService.get('DATABASE_NAME', { infer: true });
   }
 
+  get databaseSsl(): boolean {
+    return this.configService.get('DATABASE_SSL', { infer: true }) ?? false;
+  }
+
   // GitHub OAuth Properties
   get githubClientId(): string {
     return this.configService.get('GITHUB_OAUTH_CLIENT_ID', { infer: true });
@@ -62,6 +66,10 @@ export class AppConfigService {
 
   get githubOrgName(): string {
     return this.configService.get('GITHUB_ORG_NAME', { infer: true });
+  }
+
+  get githubPat(): string | undefined {
+    return this.configService.get('GITHUB_PAT', { infer: true });
   }
 
   // Secrets

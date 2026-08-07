@@ -18,8 +18,9 @@ import { AuditLogEntity } from './entities/audit-log.entity';
         username: appConfig.databaseUser,
         password: appConfig.databasePassword,
         database: appConfig.databaseName,
+        ssl: appConfig.databaseSsl ? { rejectUnauthorized: false } : false,
         entities: [SystemConfigEntity, RepoOverrideEntity, AuditLogEntity],
-        synchronize: false, // Strict: off in all environments
+        synchronize: appConfig.isDevelopment, // Auto-create tables in development
         logging: appConfig.isDevelopment,
       }),
     }),

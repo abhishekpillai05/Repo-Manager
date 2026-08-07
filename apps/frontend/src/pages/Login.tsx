@@ -1,26 +1,53 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GitBranch } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { APP_NAME } from '@/lib/constants';
+import { authService } from '@/services/auth.service';
 
 export function Login() {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
+
+  // After GitHub OAuth redirects back to /, check if we now have a valid JWT cookie
+  // and go directly to the dashboard instead of showing the login form again.
+  useEffect(() => {
+    authService
+      .isAuthenticated()
+      .then((ok) => {
+        if (ok) navigate('/dashboard', { replace: true });
+      })
+      .finally(() => setChecking(false));
+  }, [navigate]);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <span className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background relative overflow-hidden">
+      {/* Dynamic gradient background */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
+
       {/* Left panel - branding */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <GitBranch className="h-4.5 w-4.5" />
+      <div className="relative z-10 hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-sidebar/40 backdrop-blur-3xl text-sidebar-foreground border-r border-sidebar-border shadow-2xl">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+            <GitBranch className="h-5 w-5" />
           </div>
           <span className="text-sm font-semibold">{APP_NAME}</span>
         </div>
 
         <div className="space-y-6">
-          <blockquote className="space-y-3">
-            <p className="text-xl font-medium leading-relaxed text-sidebar-foreground">
+          <blockquote className="space-y-4">
+            <p className="text-2xl font-medium leading-relaxed text-sidebar-foreground/90 tracking-tight text-balance">
               "A centralized, auditable way to manage the full lifecycle of candidate test
               repositories — so your team can focus on hiring, not housekeeping."
             </p>
-            <footer className="text-sm text-sidebar-foreground/60">
+            <footer className="text-sm font-medium text-sidebar-foreground/50">
               Engineering Platform Team
             </footer>
           </blockquote>
@@ -45,33 +72,33 @@ export function Login() {
       </div>
 
       {/* Right panel - login form */}
-      <div className="flex flex-1 flex-col items-center justify-center p-8">
-        <div className="w-full max-w-sm space-y-8">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center p-8">
+        <div className="w-full max-w-sm space-y-8 glass p-10 rounded-2xl">
           {/* Mobile logo */}
           <div className="flex items-center gap-2 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GitBranch className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+              <GitBranch className="h-5 w-5" />
             </div>
-            <span className="text-sm font-semibold text-foreground">{APP_NAME}</span>
+            <span className="text-lg font-bold tracking-tight text-foreground">{APP_NAME}</span>
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Sign in to your account
+          <div className="space-y-2 text-center lg:text-left">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome back
             </h1>
             <p className="text-sm text-muted-foreground">
               Authenticate with your GitHub account to access the repository management dashboard.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Button
               id="github-signin-btn"
               variant="default"
               size="lg"
               className="w-full gap-3 h-11"
               onClick={() => {
-                /* authService.initiateGitHubLogin() */
+                authService.initiateGitHubLogin();
               }}
             >
               {/* GitHub SVG icon */}

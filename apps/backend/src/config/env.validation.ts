@@ -51,6 +51,9 @@ export class EnvironmentVariables {
   @IsOptional()
   DATABASE_NAME: string = 'pt_repo_manager';
 
+  @IsOptional()
+  DATABASE_SSL?: boolean = false;
+
   // GitHub OAuth
   @IsString()
   @IsOptional()
@@ -67,6 +70,10 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   GITHUB_ORG_NAME: string = 'placeholder_org';
+
+  @IsString()
+  @IsOptional()
+  GITHUB_PAT?: string;
 
   // JWT & Sessions
   @IsString()

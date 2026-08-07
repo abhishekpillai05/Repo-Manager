@@ -19,6 +19,7 @@ export const AppDataSource = new DataSource({
   username: process.env['DATABASE_USERNAME'] ?? 'postgres',
   password: process.env['DATABASE_PASSWORD'] ?? 'postgres',
   database: process.env['DATABASE_NAME'] ?? 'pt_repo_manager',
+  ssl: process.env['DATABASE_SSL'] === 'true' ? { rejectUnauthorized: false } : false,
   entities: [SystemConfigEntity, RepoOverrideEntity, AuditLogEntity],
   migrations: ['src/database/migrations/*.ts'],
   synchronize: false,

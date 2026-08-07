@@ -2,9 +2,9 @@
  * Current lifecycle status of a repository.
  */
 export enum RepoStatus {
-  LIVE = 'LIVE',
+  LIVE = 'Live',
 
-  ARCHIVED = 'ARCHIVED',
+  ARCHIVED = 'Archived',
 
-  PENDING_DELETION = 'PENDING_DELETION',
+  PENDING_DELETION = 'Pending Deletion',
 }

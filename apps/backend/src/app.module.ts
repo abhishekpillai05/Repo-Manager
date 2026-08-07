@@ -10,6 +10,7 @@ import { ConfigManagementModule } from './modules/config/config.module';
 import { LifecycleModule } from './modules/lifecycle/lifecycle.module';
 import { ReposModule } from './modules/repos/repos.module';
 import { SchedulerModule } from "./modules/scheduler/scheduler.module";
+import { AuditModule } from './modules/audit/audit.module';
 
 
 @Module({
@@ -25,6 +26,7 @@ import { SchedulerModule } from "./modules/scheduler/scheduler.module";
     LifecycleModule,
     ReposModule,
     SchedulerModule,
+    AuditModule,
   ],
   controllers: [],
   providers: [],

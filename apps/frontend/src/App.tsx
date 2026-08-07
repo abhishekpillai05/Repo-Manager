@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { ProtectedRoute } from '@/components/common/ProtectedRoute';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
 import { Repositories } from '@/pages/Repositories';
@@ -19,41 +21,61 @@ export function App() {
         <Route
           path="/dashboard"
           element={
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
+            <ProtectedRoute>
+              <AppLayout>
+                <ErrorBoundary>
+                  <Dashboard />
+                </ErrorBoundary>
+              </AppLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/repositories"
           element={
-            <AppLayout>
-              <Repositories />
-            </AppLayout>
+            <ProtectedRoute>
+              <AppLayout>
+                <ErrorBoundary>
+                  <Repositories />
+                </ErrorBoundary>
+              </AppLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/repositories/:id"
           element={
-            <AppLayout>
-              <RepositoryDetails />
-            </AppLayout>
+            <ProtectedRoute>
+              <AppLayout>
+                <ErrorBoundary>
+                  <RepositoryDetails />
+                </ErrorBoundary>
+              </AppLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/settings"
           element={
-            <AppLayout>
-              <Settings />
-            </AppLayout>
+            <ProtectedRoute>
+              <AppLayout>
+                <ErrorBoundary>
+                  <Settings />
+                </ErrorBoundary>
+              </AppLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/audit-log"
           element={
-            <AppLayout>
-              <AuditLog />
-            </AppLayout>
+            <ProtectedRoute>
+              <AppLayout>
+                <ErrorBoundary>
+                  <AuditLog />
+                </ErrorBoundary>
+              </AppLayout>
+            </ProtectedRoute>
           }
         />
 

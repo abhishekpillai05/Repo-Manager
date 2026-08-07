@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/Textarea';
 
 const schema = z.object({
   retentionDays: z
-    .number({ invalid_type_error: 'Must be a number' })
+    .number({ error: 'Must be a number' })
     .int()
     .min(1, 'Must be at least 1 day')
     .max(365, 'Cannot exceed 365 days'),

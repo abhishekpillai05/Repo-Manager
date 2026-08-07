@@ -4,6 +4,8 @@ import { GithubService } from "../github/github.service";
 import { SystemConfigService } from "../config/system-config.service";
 import { RepoOverrideService } from "../config/repo-override.service";
 import { LifeCycleService } from "../lifecycle/lifecycle.service";
+import { AuditService } from "../audit/audit.service";
+import { AuditAction } from "../audit/audit-action.enum";
 import { RepositoryStatus } from "../lifecycle/repository-status.enum";
 
 import { GetRepositoriesQueryDto } from "./dto/get-repositories-query.dto";
@@ -24,6 +26,7 @@ export class ReposService {
     private readonly systemConfigService: SystemConfigService,
     private readonly repoOverrideService: RepoOverrideService,
     private readonly lifecycleService: LifeCycleService,
+    private readonly auditService: AuditService,
   ) {}
 
   // ---------------------------------------------------------------------------
@@ -167,7 +170,7 @@ export class ReposService {
    * 4. Apply search filter, sort, and paginate
    * 5. Return RepositoryDto[]
    */
-  async getRepositories(query: GetRepositoriesQueryDto): Promise<RepositoryDto[]> {
+  async getRepositories(query: GetRepositoriesQueryDto, userToken?: string): Promise<RepositoryDto[]> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 50;
     const search = query.search?.trim().toLowerCase();
@@ -177,7 +180,7 @@ export class ReposService {
     const order = query.order ?? SortOrder.DESC;
 
     // Fetch all PT repositories from GitHub (already filtered and parsed by GithubService)
-    const repositories = await this.githubService.getPtRepositories();
+    const repositories = await this.githubService.getPtRepositories(userToken);
 
     // Fetch global configuration once for the entire batch
     const config = await this.systemConfigService.getOrCreateDefaultConfig();
@@ -187,6 +190,7 @@ export class ReposService {
       repositories.map(async (repo) => {
         const collaborators = await this.githubService.listOutsideCollaborators(
           repo.name,
+          userToken,
         );
         return this.buildRepositoryDto(repo, config, collaborators.length);
       }),
@@ -243,10 +247,11 @@ export class ReposService {
    * 3. Fetch global configuration from SystemConfigService
    * 4. Build RepositoryDetailsDto (extends RepositoryDto + githubUrl)
    */
-  async getRepository(repositoryName: string): Promise<RepositoryDetailsDto> {
-    const repo = await this.githubService.getRepo(repositoryName);
+  async getRepository(repositoryName: string, userToken?: string): Promise<RepositoryDetailsDto> {
+    const repo = await this.githubService.getRepo(repositoryName, userToken);
     const collaborators = await this.githubService.listOutsideCollaborators(
       repositoryName,
+      userToken,
     );
     const config = await this.systemConfigService.getOrCreateDefaultConfig();
 
@@ -265,9 +270,10 @@ export class ReposService {
    * 1. Fetch outside collaborators from GithubService
    * 2. Map to CollaboratorDto[]
    */
-  async getCollaborators(repositoryName: string): Promise<CollaboratorDto[]> {
+  async getCollaborators(repositoryName: string, userToken?: string): Promise<CollaboratorDto[]> {
     const collaborators = await this.githubService.listOutsideCollaborators(
       repositoryName,
+      userToken,
     );
 
     return collaborators.map((collaborator) => ({
@@ -285,8 +291,21 @@ export class ReposService {
    * 1. Archive via GithubService
    * 2. Return success response
    */
-  async archiveRepository(repositoryName: string): Promise<OperationResponseDto> {
-    await this.githubService.archiveRepo(repositoryName);
+  async archiveRepository(
+    repositoryName: string,
+    userToken?: string,
+    actorUsername?: string,
+  ): Promise<OperationResponseDto> {
+    await this.githubService.archiveRepo(repositoryName, userToken);
+
+    // Log the action to the audit trail
+    await this.auditService.log({
+      userId: actorUsername ?? null,
+      action: AuditAction.REPOSITORY_ARCHIVED,
+      repositoryName,
+      details: { archivedBy: actorUsername, repositoryName },
+    });
+
     return {
       success: true,
       message: "Repository archived successfully.",
@@ -300,8 +319,21 @@ export class ReposService {
    * 1. Delete via GithubService
    * 2. Return success response
    */
-  async deleteRepository(repositoryName: string): Promise<OperationResponseDto> {
-    await this.githubService.deleteRepo(repositoryName);
+  async deleteRepository(
+    repositoryName: string,
+    userToken?: string,
+    actorUsername?: string,
+  ): Promise<OperationResponseDto> {
+    await this.githubService.deleteRepo(repositoryName, userToken);
+
+    // Log the action to the audit trail
+    await this.auditService.log({
+      userId: actorUsername ?? null,
+      action: AuditAction.REPOSITORY_DELETED,
+      repositoryName,
+      details: { deletedBy: actorUsername, repositoryName },
+    });
+
     return {
       success: true,
       message: "Repository deleted successfully.",
@@ -318,8 +350,19 @@ export class ReposService {
   async removeCollaborator(
     repositoryName: string,
     username: string,
+    userToken?: string,
+    actorUsername?: string,
   ): Promise<OperationResponseDto> {
-    await this.githubService.revokeCollaborator(repositoryName, username);
+    await this.githubService.revokeCollaborator(repositoryName, username, userToken);
+
+    // Log the action to the audit trail
+    await this.auditService.log({
+      userId: actorUsername ?? null,
+      action: AuditAction.COLLABORATOR_REVOKED,
+      repositoryName,
+      details: { revokedUser: username, revokedBy: actorUsername, repositoryName },
+    });
+
     return {
       success: true,
       message: "Collaborator removed successfully.",
@@ -338,16 +381,28 @@ export class ReposService {
    */
   async removeAllCollaborators(
     repositoryName: string,
+    userToken?: string,
+    actorUsername?: string,
   ): Promise<OperationResponseDto> {
     const collaborators = await this.githubService.listOutsideCollaborators(
       repositoryName,
+      userToken,
     );
 
     for (const collaborator of collaborators) {
       await this.githubService.revokeCollaborator(
         repositoryName,
         collaborator.login,
+        userToken,
       );
+
+      // Log each individual revocation
+      await this.auditService.log({
+        userId: actorUsername ?? null,
+        action: AuditAction.COLLABORATOR_REVOKED,
+        repositoryName,
+        details: { revokedUser: collaborator.login, revokedBy: actorUsername, repositoryName },
+      });
     }
 
     return {

@@ -26,7 +26,7 @@ export function StatsCard({
   isLoading = false,
 }: StatsCardProps) {
   return (
-    <Card className={cn('relative overflow-hidden', className)}>
+    <Card className={cn('relative overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-border/50', className)}>
       <CardContent className="pt-5">
         <div className="flex items-start justify-between">
           <div className="space-y-1 min-w-0 flex-1">
@@ -54,7 +54,7 @@ export function StatsCard({
               </p>
             )}
           </div>
-          <div className="ml-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="ml-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/15">
             <Icon className="h-5 w-5" />
           </div>
         </div>

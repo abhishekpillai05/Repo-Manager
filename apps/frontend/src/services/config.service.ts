@@ -1,30 +1,33 @@
 /**
- * System configuration service — placeholder methods for future backend integration.
+ * System configuration service — wired to backend /config endpoints.
  */
 import type { SystemConfig, UpdateSystemConfigPayload } from '@pt-repo-manager/shared-types';
+import { apiGet, apiPut } from './api';
 
 export const configService = {
   /**
    * Fetch the current global system configuration.
-   * @throws Error Not implemented — awaiting backend.
    */
   async getConfig(): Promise<SystemConfig> {
-    throw new Error('Not implemented');
+    return apiGet<SystemConfig>('/config');
   },
 
   /**
    * Update the global system configuration.
-   * @throws Error Not implemented — awaiting backend.
    */
-  async updateConfig(_payload: UpdateSystemConfigPayload): Promise<SystemConfig> {
-    throw new Error('Not implemented');
+  async updateConfig(payload: UpdateSystemConfigPayload): Promise<SystemConfig> {
+    return apiPut<SystemConfig>('/config', payload);
   },
 
   /**
    * Reset the configuration to factory defaults.
-   * @throws Error Not implemented — awaiting backend.
    */
   async resetConfig(): Promise<SystemConfig> {
-    throw new Error('Not implemented');
+    return apiPut<SystemConfig>('/config', {
+      retentionDays: 90,
+      autoDeleteEnabled: true,
+      autoArchiveEnabled: false,
+      warningDays: 7,
+    });
   },
 };

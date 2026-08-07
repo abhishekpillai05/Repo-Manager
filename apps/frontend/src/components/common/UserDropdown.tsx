@@ -1,4 +1,6 @@
-import { LogOut, Settings, User, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LogOut, Settings, User, ChevronDown, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -10,6 +12,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
 import { getInitials } from '@/lib/utils';
+import { authService } from '@/services/auth.service';
 import type { AuthUser } from '@/services/auth.service';
 
 interface UserDropdownProps {
@@ -17,9 +20,20 @@ interface UserDropdownProps {
 }
 
 export function UserDropdown({ user }: UserDropdownProps) {
-  const displayName = user?.name ?? 'Tech Lead';
-  const username = user?.username ?? '—';
+  const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = useState(false);
+  const displayName = user?.githubUsername ?? 'Tech Lead';
+  const username = user?.githubUsername ?? '—';
   const initials = getInitials(displayName);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await authService.logout();
+    } finally {
+      navigate('/', { replace: true });
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -30,17 +44,9 @@ export function UserDropdown({ user }: UserDropdownProps) {
           id="user-dropdown"
           aria-label="User menu"
         >
-          {user?.avatarUrl ? (
-            <img
-              src={user.avatarUrl}
-              alt={displayName}
-              className="h-7 w-7 rounded-full object-cover ring-2 ring-border"
-            />
-          ) : (
-            <span className="h-7 w-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold ring-2 ring-border">
-              {initials}
-            </span>
-          )}
+          <span className="h-7 w-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold ring-2 ring-border">
+            {initials}
+          </span>
           <span className="hidden sm:block text-sm font-medium text-foreground max-w-[120px] truncate">
             {displayName}
           </span>
@@ -68,11 +74,20 @@ export function UserDropdown({ user }: UserDropdownProps) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:text-destructive gap-2 cursor-pointer">
-          <LogOut className="h-4 w-4" />
-          Sign out
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive gap-2 cursor-pointer"
+          onClick={handleLogout}
+          disabled={loggingOut}
+        >
+          {loggingOut ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="h-4 w-4" />
+          )}
+          {loggingOut ? 'Signing out…' : 'Sign out'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+

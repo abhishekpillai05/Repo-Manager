@@ -4,7 +4,7 @@
 
 /* ─── Design Tokens — Light Mode ─────────────────────────────── */
 :root {
-  --background: 0 0% 98%;
+  --background: 210 40% 98%;
   --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
@@ -13,7 +13,7 @@
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
 
-  --primary: 221 83% 53%;
+  --primary: 243 75% 59%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 210 40% 96%;
@@ -36,36 +36,36 @@
 
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 221 83% 53%;
+  --ring: 243 75% 59%;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
   --sidebar: 222 47% 8%;
   --sidebar-foreground: 213 31% 91%;
   --sidebar-border: 215 28% 17%;
-  --sidebar-accent: 215 28% 17%;
+  --sidebar-accent: 215 28% 25%;
   --sidebar-accent-foreground: 0 0% 100%;
 }
 
 /* ─── Design Tokens — Dark Mode ──────────────────────────────── */
 .dark {
-  --background: 222 47% 8%;
+  --background: 222 47% 5%;
   --foreground: 213 31% 91%;
 
-  --card: 222 47% 11%;
+  --card: 222 47% 9%;
   --card-foreground: 213 31% 91%;
 
-  --popover: 222 47% 11%;
+  --popover: 222 47% 9%;
   --popover-foreground: 213 31% 91%;
 
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 8%;
+  --primary: 243 75% 65%;
+  --primary-foreground: 222 47% 5%;
 
   --secondary: 215 28% 17%;
   --secondary-foreground: 213 31% 91%;
 
   --muted: 215 28% 17%;
-  --muted-foreground: 215 20% 55%;
+  --muted-foreground: 215 20% 65%;
 
   --accent: 215 28% 17%;
   --accent-foreground: 213 31% 91%;
@@ -77,16 +77,16 @@
   --success-foreground: 0 0% 100%;
 
   --warning: 38 92% 50%;
-  --warning-foreground: 222 47% 8%;
+  --warning-foreground: 222 47% 5%;
 
   --border: 215 28% 17%;
   --input: 215 28% 17%;
-  --ring: 217 91% 60%;
+  --ring: 243 75% 65%;
 
-  --sidebar: 222 47% 6%;
+  --sidebar: 222 47% 4%;
   --sidebar-foreground: 213 31% 85%;
   --sidebar-border: 215 28% 13%;
-  --sidebar-accent: 215 28% 13%;
+  --sidebar-accent: 215 28% 20%;
   --sidebar-accent-foreground: 0 0% 100%;
 }
 
@@ -120,7 +120,12 @@
     font: inherit;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold tracking-tight;
   }
 }
@@ -156,5 +161,13 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  .glass {
+    @apply bg-background/80 backdrop-blur-md border border-border shadow-sm;
+  }
+
+  .dark .glass {
+    @apply bg-background/60 border-white/5;
   }
 }

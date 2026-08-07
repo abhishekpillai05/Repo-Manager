@@ -5,6 +5,7 @@ import { SessionStoreService } from './session-store.service';
 export interface JwtPayload {
   githubUsername: string;
   sessionId: string;
+  githubAccessToken?: string;
 }
 
 @Injectable()
@@ -15,11 +16,12 @@ export class AuthService {
   ) {}
 
   async handleGithubCallback(githubUsername: string, githubAccessToken: string): Promise<{ jwtToken: string; sessionId: string }> {
-    // 1. Save raw access token server-side only in SessionStore
+    // 1. Save raw access token server-side in SessionStore (used for logout invalidation)
     const sessionId = this.sessionStoreService.createSession(githubUsername, githubAccessToken);
 
-    // 2. Sign JWT containing githubUsername and sessionId
-    const payload: JwtPayload = { githubUsername, sessionId };
+    // 2. Sign JWT containing githubUsername, sessionId AND githubAccessToken
+    //    Embedding the token in JWT makes sessions survive backend restarts.
+    const payload: JwtPayload = { githubUsername, sessionId, githubAccessToken };
     const jwtToken = await this.jwtService.signAsync(payload);
 
     return { jwtToken, sessionId };

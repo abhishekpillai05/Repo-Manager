@@ -34,7 +34,7 @@ export function Sidebar({ collapsed = false, onToggleCollapse }: SidebarProps) {
       initial={false}
       animate={{ width: collapsed ? 60 : 220 }}
       transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-      className="relative flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground overflow-hidden flex-shrink-0"
+      className="relative flex flex-col border-r border-border/50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground overflow-hidden flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
       style={{ minHeight: '100vh' }}
     >
       {/* Logo */}
@@ -82,18 +82,18 @@ export function Sidebar({ collapsed = false, onToggleCollapse }: SidebarProps) {
               to={item.href}
               aria-label={item.label}
               className={cn(
-                'group flex items-center gap-3 rounded-md px-2 py-2 text-sm font-medium transition-colors',
-                'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                'group flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium transition-all duration-300',
+                'hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground',
                 isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                  ? 'bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]'
                   : 'text-sidebar-foreground/70',
                 collapsed && 'justify-center px-0',
               )}
             >
               <Icon
                 className={cn(
-                  'h-4 w-4 flex-shrink-0 transition-colors',
-                  isActive ? 'text-primary' : 'text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80',
+                  'h-4 w-4 flex-shrink-0 transition-all duration-300',
+                  isActive ? 'text-primary scale-110 drop-shadow-sm' : 'text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80 group-hover:scale-110',
                 )}
               />
               <AnimatePresence>

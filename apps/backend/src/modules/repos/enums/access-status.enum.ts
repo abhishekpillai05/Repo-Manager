@@ -7,6 +7,6 @@
  * - GET /repos
  */
 export enum AccessStatus {
-  ACTIVE = 'ACTIVE',
-  REVOKED = 'REVOKED',
+  ACTIVE = 'Active',
+  REVOKED = 'Revoked',
 }

@@ -23,14 +23,18 @@ export class AuthController {
     private readonly appConfig: AppConfigService,
   ) {}
 
-  @Get('login')
   @Get('github')
   @UseGuards(AuthGuard('github'))
   async githubLogin() {
     // Passport redirects automatically to GitHub OAuth authorize page
   }
 
-  @Get('callback')
+  @Get('login')
+  @UseGuards(AuthGuard('github'))
+  async githubLoginAlias() {
+    // Alias for /auth/github — Passport redirects automatically
+  }
+
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubCallback(@Req() req: Request, @Res() res: Response) {

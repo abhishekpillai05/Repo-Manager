@@ -9,11 +9,35 @@ Monorepo scaffold for the practical-test GitHub repository lifecycle manager des
 - `packages/shared-types` - shared DTOs and interfaces
 - `packages/tsconfig` - shared TypeScript presets
 
-## Next steps
+## Getting Started / How to Run
 
-1. Install dependencies with `pnpm install`.
-2. Wire the backend to GitHub OAuth, TypeORM, and the scheduler flows.
-3. Connect the frontend to the API and fill in dashboard interactions.
+This is a monorepo managed with `pnpm` and `turbo`. Follow these steps to get both the frontend and backend running locally:
+
+### 1. Install Dependencies
+From the root of the project, run:
+```bash
+pnpm install
+```
+
+### 2. Environment Variables
+You need to set up environment variables for both applications.
+- For the backend: Copy `apps/backend/.env.example` to `apps/backend/.env` and fill in your database credentials and GitHub OAuth settings.
+- For the frontend: Copy `apps/frontend/.env.example` to `apps/frontend/.env` (if applicable).
+
+### 3. Run the Database (Optional but recommended)
+If you need to spin up a local PostgreSQL database using Docker, you can run:
+```bash
+pnpm docker:db
+```
+
+### 4. Start Development Servers
+You can run both the frontend and backend simultaneously using turbo:
+```bash
+pnpm dev
+```
+Alternatively, you can run them individually from the root directory:
+- **Frontend only:** `pnpm dev:frontend` (Runs on http://localhost:5173)
+- **Backend only:** `pnpm dev:backend` (Runs on http://localhost:3000)
 
 
 

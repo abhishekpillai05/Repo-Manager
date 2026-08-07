@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GitFork, Trash2, ShieldOff } from 'lucide-react';
 import type { RepoSummary } from '@pt-repo-manager/shared-types';
 import { StatsCard } from '@/components/common/StatsCard';
@@ -11,6 +11,7 @@ import { ConfirmDeleteModal } from '@/components/modals/ConfirmDeleteModal';
 import { RevokeAccessModal } from '@/components/modals/RevokeAccessModal';
 import { ArchiveRepoModal } from '@/components/modals/ArchiveRepoModal';
 import { useDashboardFilters } from '@/hooks/useDashboardFilters';
+import { repoService } from '@/services/repo.service';
 
 export function Repositories() {
   const {
@@ -19,11 +20,32 @@ export function Repositories() {
     setSortBy, toggleSortOrder, setPage, resetFilters,
   } = useDashboardFilters();
 
-  // ─── Data placeholders (API-ready) ─────────────────────────
-  const rows: RepoSummary[] = [];
-  const totalPages = 0;
-  const totalItems = 0;
-  const isLoading = false;
+  // ─── Data state ─────────────────────────────────────────────
+  const [rows, setRows] = useState<RepoSummary[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await repoService.listRepos(filters as any);
+      setRows(res.data);
+      setTotalPages(res.totalPages);
+      setTotalItems(res.total);
+    } catch (err: any) {
+      console.error('Failed to fetch repos', err);
+      setError(`Failed to load repositories: ${err?.message ?? 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // ─── Selection state ───────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -53,6 +75,16 @@ export function Repositories() {
         title="Repositories"
         description="All pt- prefixed repositories in the connected GitHub organization."
       />
+
+      {/* ─── Error banner ────────────────────────────────────── */}
+      {error && (
+        <div style={{ padding: '1rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+          <p style={{ fontSize: '0.875rem', color: '#ef4444', margin: 0 }}>{error}</p>
+          <button onClick={fetchData} style={{ fontSize: '0.75rem', color: '#ef4444', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0 }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       <DashboardToolbar
         query={filters.query}
@@ -104,20 +136,38 @@ export function Repositories() {
         open={!!deleteTarget}
         onOpenChange={(v) => !v && setDeleteTarget(null)}
         repoName={deleteTarget?.name ?? ''}
-        onConfirm={() => setDeleteTarget(null)}
+        onConfirm={async () => {
+          if (deleteTarget) {
+            await repoService.deleteRepo(deleteTarget.name);
+            setDeleteTarget(null);
+            fetchData();
+          }
+        }}
       />
       <RevokeAccessModal
         open={!!revokeTarget}
         onOpenChange={(v) => !v && setRevokeTarget(null)}
         repoName={revokeTarget?.name ?? ''}
         isAll
-        onConfirm={() => setRevokeTarget(null)}
+        onConfirm={async () => {
+          if (revokeTarget) {
+            await repoService.revokeAllAccess(revokeTarget.name);
+            setRevokeTarget(null);
+            fetchData();
+          }
+        }}
       />
       <ArchiveRepoModal
         open={!!archiveTarget}
         onOpenChange={(v) => !v && setArchiveTarget(null)}
         repoName={archiveTarget?.name ?? ''}
-        onConfirm={() => setArchiveTarget(null)}
+        onConfirm={async () => {
+          if (archiveTarget) {
+            await repoService.archiveRepo(archiveTarget.name);
+            setArchiveTarget(null);
+            fetchData();
+          }
+        }}
       />
     </div>
   );

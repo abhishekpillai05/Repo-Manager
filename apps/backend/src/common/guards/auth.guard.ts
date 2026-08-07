@@ -41,11 +41,10 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid JWT payload');
       }
 
-      // Verify active session exists in server-side session store
+      // Try to get GitHub token from session store first (most up-to-date)
+      // Fall back to the token embedded in the JWT (survives backend restarts)
       const session = this.sessionStoreService.getSession(payload.sessionId);
-      if (!session) {
-        throw new UnauthorizedException('Session expired or invalidated');
-      }
+      const githubAccessToken = session?.githubAccessToken ?? payload.githubAccessToken;
 
       // Attach user information & IP address to request
       const clientIp =
@@ -56,7 +55,7 @@ export class JwtAuthGuard implements CanActivate {
       (request as any).user = {
         githubUsername: payload.githubUsername,
         sessionId: payload.sessionId,
-        githubAccessToken: session.githubAccessToken,
+        githubAccessToken,
         ipAddress: clientIp,
       } as RequestUser;
 

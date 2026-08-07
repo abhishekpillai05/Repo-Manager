@@ -1,46 +1,44 @@
 /**
- * Authentication service — placeholder methods for future GitHub OAuth integration.
+ * Authentication service — wired to backend GitHub OAuth endpoints.
  */
+import { apiGet, apiPost } from './api';
 
 export interface AuthUser {
-  id: string;
-  username: string;
-  name: string;
-  email: string;
-  avatarUrl: string;
-  role: 'tech_lead' | 'engineering_manager';
+  githubUsername: string;
 }
 
 export const authService = {
   /**
    * Initiate GitHub OAuth flow by redirecting to the backend auth endpoint.
-   * @throws Error Not implemented — awaiting backend.
    */
   initiateGitHubLogin(): void {
-    throw new Error('Not implemented');
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    window.location.href = `${apiUrl}/api/auth/github`;
   },
 
   /**
    * Fetch the currently authenticated user profile.
-   * @throws Error Not implemented — awaiting backend.
    */
   async getCurrentUser(): Promise<AuthUser> {
-    throw new Error('Not implemented');
+    return apiGet<AuthUser>('/auth/me');
   },
 
   /**
    * Log the current user out and invalidate the session.
-   * @throws Error Not implemented — awaiting backend.
    */
   async logout(): Promise<void> {
-    throw new Error('Not implemented');
+    await apiPost<{ message: string }>('/auth/logout');
   },
 
   /**
    * Check if the user is currently authenticated.
-   * @throws Error Not implemented — awaiting backend.
    */
   async isAuthenticated(): Promise<boolean> {
-    throw new Error('Not implemented');
+    try {
+      await this.getCurrentUser();
+      return true;
+    } catch {
+      return false;
+    }
   },
 };

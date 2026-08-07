@@ -60,12 +60,24 @@ export class GithubService {
   ) {}
 
   /**
-   * Instantiates an Octokit client using the user's stored GitHub access token.
-   * If no token is provided, logs a warning and uses unauthenticated/default client.
+   * Instantiates an Octokit client.
+   *
+   * @param userToken  - The user's OAuth access token.
+   * @param preferPat  - When true (mutations: archive/delete/revoke), prefer the
+   *                     server-side GITHUB_PAT which has org-admin rights over the
+   *                     user's OAuth token. Defaults to false (reads prefer user token).
    */
-  public createOctokitClient(userToken?: string): Octokit {
+  public createOctokitClient(userToken?: string, preferPat = false): Octokit {
+    let token: string | undefined;
+    if (preferPat) {
+      // For mutations: PAT first (org-admin), user token as fallback
+      token = this.appConfigService.githubPat || userToken;
+    } else {
+      // For reads: user token first, PAT as fallback
+      token = userToken || this.appConfigService.githubPat;
+    }
     return new Octokit({
-      auth: userToken || undefined,
+      auth: token || undefined,
     });
   }
 
@@ -80,8 +92,9 @@ export class GithubService {
     fn: (octokit: Octokit) => Promise<T>,
     userToken?: string,
     maxRetries: number = 3,
+    preferPat: boolean = false,
   ): Promise<T> {
-    const octokit = this.createOctokitClient(userToken);
+    const octokit = this.createOctokitClient(userToken, preferPat);
     let attempt = 0;
 
     while (attempt < maxRetries) {
@@ -93,12 +106,24 @@ export class GithubService {
         const headers = error.response?.headers || {};
         const responseMessage = error.message || 'GitHub API Request Failed';
 
-        // Rate limit detection
-        const isRateLimit =
-          status === 403 ||
-          status === 429 ||
+        // True rate-limit signals:
+        //   - HTTP 429 (Too Many Requests)
+        //   - HTTP 403 ONLY when accompanied by rate-limit headers or message keywords
+        //   - Never treat permission/auth 403s as rate limits
+        const hasRateLimitHeader =
+          !!headers['x-ratelimit-remaining'] && headers['x-ratelimit-remaining'] === '0';
+        const hasRateLimitMessage =
           responseMessage.toLowerCase().includes('rate limit') ||
-          responseMessage.toLowerCase().includes('secondary rate');
+          responseMessage.toLowerCase().includes('secondary rate') ||
+          responseMessage.toLowerCase().includes('abuse detection');
+
+        const isRateLimit =
+          status === 429 ||
+          (status === 403 && (hasRateLimitHeader || hasRateLimitMessage));
+
+        // Non-retryable errors: permission denied, not found, bad request, etc.
+        const isNonRetryable = status === 401 || status === 404 || status === 422 ||
+          (status === 403 && !isRateLimit);
 
         if (isRateLimit && attempt < maxRetries) {
           let retryAfterMs = 1000 * Math.pow(2, attempt);
@@ -124,7 +149,7 @@ export class GithubService {
           continue;
         }
 
-        // If retries exhausted or non-rate-limit error, throw GithubApiError
+        // Fail immediately for permission errors and other non-retryable failures
         throw new GithubApiError(
           `GitHub API Error (${status}): ${responseMessage}`,
           status,
@@ -231,7 +256,7 @@ export class GithubService {
         archived: true,
       });
       return response.data;
-    }, userToken);
+    }, userToken, 3, true); // preferPat=true: mutations need org-admin rights
   }
 
   /**
@@ -246,7 +271,7 @@ export class GithubService {
         owner: org,
         repo: repoName,
       });
-    }, userToken);
+    }, userToken, 3, true); // preferPat=true: mutations need org-admin rights
   }
 
   /**
@@ -266,6 +291,6 @@ export class GithubService {
         repo: repoName,
         username,
       });
-    }, userToken);
+    }, userToken, 3, true); // preferPat=true: mutations need org-admin rights
   }
 }
