@@ -476,23 +476,7 @@ Deletion operations should be treated as irreversible.
 * Lifecycle configuration
 * Audit logging
 * CSV audit export
-
-### Out of Scope
-
-The current v1 PRD does not target:
-
-* GitLab
-* Bitbucket
-* Azure DevOps
-* Multi-organization GitHub management
-* Candidate-facing portals
-* Candidate email notifications
-* ATS/HR integrations
-* Repository creation workflows
-
-The repositories are assumed to be created externally.
-
----
+  
 
 ## 🗺️ Roadmap
 
