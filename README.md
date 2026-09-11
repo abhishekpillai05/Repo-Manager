@@ -16,9 +16,6 @@ Monorepo scaffold for the practical-test GitHub repository lifecycle manager des
 3. Connect the frontend to the API and fill in dashboard interactions.
 
 
-
-
-
 pt-repo-manager/
 ├── apps/
 │   ├── backend/                         # NestJS Backend Application
